@@ -1,12 +1,15 @@
-const jimp = require("jimp");
 const fs = require("fs");
+const jimp = require("jimp");
 const path = require("path");
 
 const THRESHOLD = 2500000000;
 
-const COLS = 800; //100mm
-const ROWS = 1198; //150mm
-// 203dots (8dots/mm)
+const wpaper = 100; //width paper on mm
+const hpaper = 150; //height paper on mm
+const resdot = 8; //resolution dots per mm
+
+const COLS = wpaper * resdot;
+const ROWS = hpaper * resdot;
 
 const labelPath = path.resolve(process.cwd(), process.argv[2]);
 
@@ -31,8 +34,10 @@ jimp.read(labelPath, async (err, image) => {
 
     const label = Buffer.concat([
         Buffer.alloc(512),
-        Buffer.from("\r\nSIZE 99.8 mm, 149.9 mm"),
+        // Buffer.from("\r\nSIZE 99.8 mm, 149.9 mm"),
+        Buffer.from("\r\nSIZE " + wpaper + " mm, " + hpaper + " mm"),
         Buffer.from("\r\nSET TEAR ON"),
+        Buffer.from("\r\nSET RESPONSE ON"),
         Buffer.from("\r\nSET CUTTER OFF"),
         Buffer.from("\r\nSET PEEL OFF"),
         Buffer.from("\r\nCLS"),
@@ -41,6 +46,6 @@ jimp.read(labelPath, async (err, image) => {
         Buffer.from("\r\nPRINT 1,1"),
         Buffer.from("\r\n"),
       ]);
-    // fs.writeFileSync("out.tspl", label); // debugging
-    fs.writeFileSync("/dev/usb/lp0", label);
+    fs.writeFileSync("out.tspl", label); // debugging
+    // fs.writeFileSync("/dev/usb/lp0", label);
 });

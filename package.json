@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/gustiarto/raster-tspl-js#readme",
   "dependencies": {
+    "http": "^0.0.1-security",
     "jimp": "^0.16.1"
   }
 }
